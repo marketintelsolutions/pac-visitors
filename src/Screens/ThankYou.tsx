@@ -40,9 +40,9 @@ export default function ThankYou({ visitor }) {
                     </p>
                     <a
                       className="group inline-block font-heading font-medium text-gray-900 hover:text-gray-800 text-base overflow-hidden"
-                      href="tel:0800000000"
+                      href="tel:+23412718630"
                     >
-                      <p className="mb-1">📞 080 000 000 00</p>
+                      <p className="mb-1">📞 +234 (1) 271 8630</p>
                       <div className="w-full transform -translate-x-0 group-hover:translate-x-full h-0.5 bg-gradient-cyan transition ease-in-out duration-500"></div>
                     </a>
                   </div>
@@ -59,9 +59,9 @@ export default function ThankYou({ visitor }) {
                     </p>
                     <a
                       className="group inline-block font-heading font-medium text-gray-900 hover:text-gray-800 text-base overflow-hidden"
-                      href="tel:0800000000"
+                      href="tel:+23412718630"
                     >
-                      <p className="mb-1">📞 080 000 000 00</p>
+                      <p className="mb-1">📞 +234 (1) 271 8630</p>
                       <div className="w-full transform -translate-x-0 group-hover:translate-x-full h-0.5 bg-gradient-cyan transition ease-in-out duration-500"></div>
                     </a>
                   </div>
