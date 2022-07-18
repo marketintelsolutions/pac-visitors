@@ -111,7 +111,7 @@ export default function Homepage() {
               <div className="w-full p-6">
                 <div className="md:max-w-xl text-center mx-auto">
                   <h2 className="mb-4 font-heading font-bold text-gray-900 text-6xl sm:text-7xl">
-                    Welcome to PAC {visitor && visitor.name}
+                    Welcome to PAC Holdings {visitor && visitor.name}
                   </h2>
                   <p className="mb-11 text-lg text-gray-500">
                     {visitor
@@ -162,12 +162,12 @@ export default function Homepage() {
                         />
                       </div>
                       <div className="w-full p-2 text-left">
-                        <small className="">Name Of Company / Address</small>
+                        <small className="">Name Of Company</small>
                         <input
                           className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
                           type="text"
                           required
-                          placeholder="Name Of Company / Address"
+                          placeholder="Name Of Company"
                           name="company"
                           onChange={(e) => {
                             setCompany(e.target.value);
@@ -191,7 +191,7 @@ export default function Homepage() {
                           <button className="p-1 w-full font-heading font-medium text-base text-white overflow-hidden rounded-md">
                             <div className="relative py-4 px-9 bg-gradient-blue overflow-hidden rounded-md flex justify-center">
                               <div className="absolute top-0 left-0  h-full w-full bg-gray-900 transition ease-in-out duration-500"></div>
-                              <p className="relative z-10">Allow me in</p>
+                              <p className="relative z-10">Proceed</p>
                               {addingVisitor && (
                                 <svg
                                   className="animate-spin h-5 w-5 mr-3  rounded-full border-white border-t-2 mx-2"
@@ -269,7 +269,7 @@ export default function Homepage() {
                                   viewBox="0 0 24 24"
                                 ></svg>
                               )}
-                              <p className="relative z-10">Allow me in</p>
+                              <p className="relative z-10">Submit</p>
                             </div>
                           </button>
                         </div>

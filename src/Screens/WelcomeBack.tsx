@@ -10,9 +10,9 @@ export default function WelcomeBack({ visitor, onClick }) {
       </a>{" "}
       <Radial className="absolute left-0 top-0 h-full" />
       <div className="relative z-10 container mx-auto px-4 ">
-        <div className="md:max-w-lg mx-auto text-center">
+        <div className="md:max-w-3xl mx-auto text-center">
           <h2 className="mb-5 font-heading font-semibold text-6xl sm:text-7xl text-gray-900">
-            Welcome back to PAC {visitor?.name}!
+            Welcome back to PAC Holdings {visitor?.name}!
           </h2>
           <p className="text-gray-600 text-lg">
             Who and why are you visting today?
@@ -28,7 +28,7 @@ export default function WelcomeBack({ visitor, onClick }) {
           >
             <div className="relative py-4 px-9 bg-gradient-blue overflow-hidden rounded-md flex justify-center">
               <div className="absolute top-0 left-0  h-full w-full bg-gray-900 transition ease-in-out duration-500"></div>
-              <p className="relative z-10">Allow me in</p>
+              <p className="relative z-10">Proceed</p>
             </div>
           </button>
         </div>
