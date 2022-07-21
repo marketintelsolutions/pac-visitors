@@ -14,6 +14,7 @@ export default function Homepage() {
   const [vistors, setVistors] = useState<Visitor[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [visitor, setVisitor] = useState<Visitor | null>(null);
+  const [phone, setPhone] = useState("");
   const [returningVisitor, setReturningVisitor] = useState<Visitor | null>(
     null
   );
@@ -35,6 +36,10 @@ export default function Homepage() {
       setStep(STEPS.VISITING_AGAIN);
     }
   }, []);
+  const resertUser = () => {
+    window.localStorage.removeItem("visitor");
+    setStep(STEPS.AUTH);
+  };
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,9 +58,11 @@ export default function Homepage() {
   const handleAddVisitor = async () => {
     setAddingVisitor(true);
     const returningVisitorData = vistors.find((i) => i.email === email);
+    console.log({ returningVisitorData });
+
     if (!returningVisitorData) {
-      await addVisitor({ name, email, company });
-      setVisitor({ name, email, company });
+      await addVisitor({ name, email, company, phone });
+      setVisitor({ name, email, company, phone });
     } else {
       setVisitor(returningVisitor);
     }
@@ -63,7 +70,7 @@ export default function Homepage() {
     if (rememberMe) {
       window.localStorage.setItem(
         "visitor",
-        JSON.stringify(returningVisitorData || { name, email, company })
+        JSON.stringify(returningVisitorData || { name, email, company, phone })
       );
     }
     setStep(STEPS.VISIT_DETAILS);
@@ -71,7 +78,7 @@ export default function Homepage() {
   const handleAddVisit = async () => {
     setAddingVisit(true);
     const visitData = {
-      visitor: visitor.email,
+      visitor: visitor?.email,
       hasAppointment,
       host,
       time: new Date().getTime(),
@@ -94,6 +101,7 @@ export default function Homepage() {
             setVisitor(rememberMeUser);
             setStep(STEPS.VISIT_DETAILS);
           }}
+          onReset={resertUser}
         />
       ) : (
         <section className="relative pt-16 pb-36 bg-gradient-gray2 overflow-hidden min-h-screen">
@@ -140,6 +148,7 @@ export default function Homepage() {
                           className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
                           type="text"
                           required
+                          title="Full name"
                           placeholder="Full name"
                           name="full-name"
                           onChange={(e) => {
@@ -154,10 +163,25 @@ export default function Homepage() {
                           className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
                           type="email"
                           required
+                          title="Email Address"
                           placeholder="Email Address"
                           name="email"
                           onChange={(e) => {
                             setEmail(e.target.value);
+                          }}
+                        />
+                      </div>
+                      <div className="w-full p-2 text-left">
+                        <small className="">Phone </small>
+                        <input
+                          className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
+                          type="tel"
+                          title="Phone Number"
+                          required
+                          placeholder="080 0000 0000"
+                          name="email"
+                          onChange={(e) => {
+                            setPhone(e.target.value);
                           }}
                         />
                       </div>
@@ -167,6 +191,7 @@ export default function Homepage() {
                           className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
                           type="text"
                           required
+                          title="Name Of Company"
                           placeholder="Name Of Company"
                           name="company"
                           onChange={(e) => {

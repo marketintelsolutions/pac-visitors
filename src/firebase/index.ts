@@ -7,7 +7,7 @@ import {
   doc,
   setDoc,
   getDoc,
-  addDoc,
+  addDoc,updateDoc
 } from "firebase/firestore";
 import { Visit, Visitor } from "../models";
 
@@ -32,12 +32,55 @@ const db = getFirestore(app);
 
 const visitorsRef = collection(db, "visitors");
 
+async function getVisits() {
+  const visitsCol = collection(db, "visits");
+
+  const citySnapshot = await getDocs(visitsCol);
+  console.log({citySnapshot:citySnapshot.docs.map(d=>d.id)});
+  
+  const cityList = citySnapshot.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id:doc.id
+    }
+  });
+  return cityList;
+}
 async function getVisitors() {
   const visitorsCol = collection(db, "visitors");
   const citySnapshot = await getDocs(visitorsCol);
   const cityList = citySnapshot.docs.map((doc) => doc.data());
   return cityList;
 }
+const addFeedback = async (data: Visit) => {
+  console.log({data});
+  
+  await addDoc(collection(db, "feedbacks"), data)
+    .then((c) => {
+      console.log({c});
+      
+      return data;
+    })
+    .catch((error) => {
+      console.log({error});
+      
+      return null;
+    });
+};
+const generateFirebaseId = (path: string)=>{
+
+  const ref =  collection;
+  return ref
+}
+const updateVisit = async (data: Visit,id:string) => {
+  const visitDocRef = doc(db, "visits", id);
+  await updateDoc(visitDocRef, data).then((c) => {
+    return data;
+  })
+  .catch((error) => {
+    return null;
+  });;
+};
 const addVisit = async (data: Visit) => {
   await addDoc(collection(db, "visits"), data)
     .then((c) => {
@@ -57,4 +100,4 @@ const addVisitor = async (data: Visitor) => {
     });
 };
 
-export { getVisitors, addVisitor, addVisit };
+export { getVisitors, addVisitor, addVisit, addFeedback,getVisits,generateFirebaseId,updateVisit };

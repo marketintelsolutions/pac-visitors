@@ -2,7 +2,7 @@ import React from "react";
 import { ReactComponent as Radial } from "../assets/radial.svg";
 import PACLogo from "../assets/PAC-HOLD.-LOGO-2018.png";
 
-export default function WelcomeBack({ visitor, onClick }) {
+export default function WelcomeBack({ visitor, onClick, onReset }) {
   return (
     <section className="relative pt-28 bg-gradient-gray2 overflow-hidden min-h-screen">
       <a href="https://panafricancapitalholdings.com/">
@@ -31,6 +31,12 @@ export default function WelcomeBack({ visitor, onClick }) {
               <p className="relative z-10">Proceed</p>
             </div>
           </button>
+          <p className="relative z-10 text-center py-3 cursor-pointer">
+            Not {visitor?.name}?{" "}
+            <span className="text-green-600" onClick={onReset}>
+              Continue as someone else.
+            </span>
+          </p>
         </div>
       </div>
     </section>
