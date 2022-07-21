@@ -20,11 +20,11 @@ export default function ThankYou({ visitor }) {
         </div>
         <div className="flex flex-wrap -m-6 pb-24 md:pb-0">
           <div className="flex w-full md:w-1/2 p-6 md:pb-0">
-            <img
+            {/* <img
               className="self-end"
               src="gradia-assets/images/contact/woman.png"
               alt=""
-            />
+            /> */}
           </div>
           <div className="flex w-full md:w-1/2 p-6">
             <div className="self-end flex flex-wrap -m-4 md:pb-24">
