@@ -1,6 +1,7 @@
 import React from "react";
 import { ReactComponent as Radial } from "../assets/radial.svg";
 import PACLogo from "../assets/PAC-HOLD.-LOGO-2018.png";
+import { Link } from "react-router-dom";
 
 export default function ThankYou({ visitor }) {
   return (
@@ -10,21 +11,22 @@ export default function ThankYou({ visitor }) {
       </a>{" "}
       <Radial className="absolute left-0 top-0 h-full" />
       <div className="relative z-10 container mx-auto px-4">
-        <div className="md:max-w-xl">
-          <h2 className="mb-5 font-heading font-semibold text-6xl sm:text-7xl text-gray-900">
-            We&rsquo;re glad to have you {visitor?.name}!
-          </h2>
-          <p className="text-gray-600 text-lg">
-            Take your time to settle in and reach out when you are in need.
-          </p>
-        </div>
-        <div className="flex flex-wrap -m-6 pb-24 md:pb-0">
-          <div className="flex w-full md:w-1/2 p-6 md:pb-0">
-            {/* <img
-              className="self-end"
-              src="gradia-assets/images/contact/woman.png"
-              alt=""
-            /> */}
+        <div className="flex flex-wrap  pb-24 md:pb-0 ">
+          <div className=" w-full md:w-1/2 p-6 md:pb-0">
+            <h2 className="mb-5 font-heading font-semibold text-6xl sm:text-7xl text-gray-900">
+              We&rsquo;re glad to have you {visitor?.name}!
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Take your time to settle in and reach out when you are in need.
+            </p>
+
+            <small className="py-3 cursor-pointer text-gray-500">
+              Done here?
+              <Link to="/feedback" className="text-green-600">
+                {" "}
+                Drop us a feedback
+              </Link>
+            </small>
           </div>
           <div className="flex w-full md:w-1/2 p-6">
             <div className="self-end flex flex-wrap -m-4 md:pb-24">

@@ -4,6 +4,7 @@ import { getVisitors, getVisits, updateVisit } from "../firebase/index.ts";
 import arraySort from "array-sort";
 import FuzzySearch from "fuzzy-search";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
@@ -15,13 +16,12 @@ export default function Dashboard() {
   const vistorsToday = visits.filter(
     (i) => i.time >= moment().startOf("day").toDate().getTime()
   );
-  console.log({ vistorsToday: vistorsToday.length });
 
   var result = arraySort(visits, ["time"], { reverse: true });
 
   const searcher = new FuzzySearch(
     result.map((i) => {
-      const visitorValue = visitors.find((x) => x.email === i.visitor);
+      const visitorValue = visitors.find((x) => x.id === i.visitor);
       return {
         ...i,
         ...visitorValue,
@@ -54,7 +54,9 @@ export default function Dashboard() {
   };
   const VisitRow: FC<VisitRowProp> = ({ visit }) => {
     const visitIndex = visits.findIndex((i) => i.id === visit.id);
-    const visitor = visitors.find((i) => i.email === visit.visitor);
+    const visitor = visitors.find(
+      (i) => i.id === visit.visitor || i.email === visit.visitor
+    );
     return (
       <tr className="text-xs bg-gray-50 border-t ">
         <td className="flex px-4 py-3">
@@ -78,7 +80,7 @@ export default function Dashboard() {
         <td className="font-medium">
           {visit.departure ? moment(visit.departure).calendar() : "--"}
         </td>
-        <td className="flex items-center h-full   py-3">
+        <td className="grid grid-cols-2 items-center h-full  py-3">
           <button
             disabled={visit.departure || updatingVisit}
             onClick={async () => {
@@ -97,7 +99,7 @@ export default function Dashboard() {
               setUpdatingVisit(false);
               setVisitUpdating(null);
             }}
-            className={`inline-block py-1 px-2 ${
+            className={` self-center py-3  ${
               visit.departure ? "bg-gray-900" : "bg-green-500"
             } text-white  rounded-full items-center`}
           >
@@ -108,6 +110,16 @@ export default function Dashboard() {
               className="animate-spin h-5 w-5 mr-3  rounded-full border-gray-900 border-t-2 mx-2"
               viewBox="0 0 24 24"
             ></svg>
+          )}
+          {visit.departure && (
+            <Link to={`/feedback?id=${visitor?.id}`}>
+              <div
+                onClick={async () => {}}
+                className={`flex justify-center   self-center mx-2 py-3  bg-green-500 text-white  rounded-full items-center`}
+              >
+                Add feedback
+              </div>
+            </Link>
           )}
         </td>
       </tr>

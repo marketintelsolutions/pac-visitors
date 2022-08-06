@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ReactComponent as Radial } from "../assets/radial.svg";
 import PACLogo from "../assets/PAC-HOLD.-LOGO-2018.png";
-import { addFeedback } from "../firebase/index.ts";
+import { addFeedback, getVisitor } from "../firebase/index.ts";
+import { useSearchParams } from "react-router-dom";
 
 enum RATING {
   ZERO,
@@ -14,6 +15,7 @@ enum RATING {
 enum STEPS {
   RATING,
   FEEDBACK,
+  GET_EMAIL,
   DONE,
 }
 export default function Feedback() {
@@ -24,6 +26,8 @@ export default function Feedback() {
   } | null>(null);
   const [step, setStep] = useState<STEPS>(STEPS.RATING);
   const [feedback, setFeedback] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [purposeAchieved, setPurposeAchieved] = useState<"Yes" | "No">("Yes");
   function changeRating(ratingValue: {
     text: string;
@@ -48,17 +52,57 @@ export default function Feedback() {
       }, 15000);
     }
   }, [step]);
-  const handleAddFeedback = async () => {
+
+  const getAndAddFeedbackData = async () => {
     setAddingFeedback(true);
-    await addFeedback({
+    const feedbackData = {
       feedback,
       rating: rating?.ratingValue,
       purposeAchieved,
-    });
-    setAddingFeedback(false);
+      userEmail,
+      userName,
+      userId,
+    };
 
-    setStep(STEPS.DONE);
+    await addFeedback(feedbackData);
+    setAddingFeedback(false);
   };
+  const handleAddFeedback = async () => {
+    if (!userEmail || !userName) {
+      setStep(STEPS.GET_EMAIL);
+    } else {
+      await getAndAddFeedbackData();
+      setStep(STEPS.DONE);
+    }
+  };
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    //get user
+    let id = searchParams.get("id");
+    if (id) {
+      setUserId(id);
+    } else {
+      const rememberMeUserData = window.localStorage.getItem("visitor");
+
+      if (rememberMeUserData && JSON.parse(rememberMeUserData)?.id) {
+        id = JSON.parse(rememberMeUserData).id;
+        setUserName(JSON.parse(rememberMeUserData).name);
+        setUserEmail(JSON.parse(rememberMeUserData).email);
+        setUserId(JSON.parse(rememberMeUserData).id);
+      }
+    }
+    (async () => {
+      const visitor = await getVisitor(id);
+      setUserName(visitor.name);
+      setUserEmail(visitor.email);
+      setUserId(visitor.id);
+    })();
+    return () => {};
+  }, []);
+
   return (
     <section className="relative pt-28 bg-gradient-gray2 overflow-hidden min-h-screen">
       <a href="https://panafricancapitalholdings.com/">
@@ -181,6 +225,67 @@ export default function Feedback() {
                     )}
                   </div>
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {step === STEPS.GET_EMAIL && (
+        <div className="relative z-10 container mx-auto px-4 mb-10">
+          <div className="md:max-w-2xl px-8 py-10 mx-auto text-center bg-white bg-opacity-30 shadow-lg rounded-3xl ">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddFeedback();
+              }}
+              className="mt-3"
+            >
+              <div className="w-full p-2 text-left">
+                <small className="">Full Name</small>
+                <input
+                  className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
+                  type="text"
+                  defaultValue={userName}
+                  required
+                  title="Full name"
+                  placeholder="Full name"
+                  name="full-name"
+                  onChange={(e) => {
+                    setUserName(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="w-full p-2 text-left">
+                <small className="">Email Address</small>
+                <input
+                  className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
+                  type="email"
+                  required
+                  defaultValue={userEmail}
+                  title="Email Address"
+                  placeholder="Email Address"
+                  name="email"
+                  onChange={(e) => {
+                    setUserEmail(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="flex flex-wrap justify-center">
+                <button
+                  type="submit"
+                  className="p-1  font-heading font-medium text-base text-white overflow-hidden rounded-3xl mt-3"
+                >
+                  <div className="relative py-4 px-9 bg-gradient-blue overflow-hidden rounded-3xl flex justify-center">
+                    <div className="absolute top-0 left-0  h-full w-full bg-gray-900 transition ease-in-out duration-500"></div>
+                    <p className="relative z-10">Submit</p>
+                    {addingFeedback && (
+                      <svg
+                        className="animate-spin h-5 w-5 mr-3  rounded-full border-white border-t-2 mx-2"
+                        viewBox="0 0 24 24"
+                      ></svg>
+                    )}
+                  </div>
+                </button>{" "}
               </div>
             </form>
           </div>

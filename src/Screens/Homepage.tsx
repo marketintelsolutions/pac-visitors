@@ -4,7 +4,12 @@ import PACLogo from "../assets/PAC-HOLD.-LOGO-2018.png";
 import AppListBox from "../Components/AppListBox";
 import AppAutoComplete from "../Components/AppAutoComplete";
 import AppRadioGroup from "../Components/AppRadioGroup";
-import { getVisitors, addVisitor, addVisit } from "../firebase/index.ts";
+import {
+  getVisitors,
+  addVisitor,
+  addVisit,
+  generateFirebaseId,
+} from "../firebase/index.ts";
 import { Visitor } from "../models";
 import MassageDialogue from "../Components/MassageDialogue.tsx";
 import ThankYou from "./ThankYou.tsx";
@@ -58,27 +63,34 @@ export default function Homepage() {
   const handleAddVisitor = async () => {
     setAddingVisitor(true);
     const returningVisitorData = vistors.find((i) => i.email === email);
-    console.log({ returningVisitorData });
 
     if (!returningVisitorData) {
-      await addVisitor({ name, email, company, phone });
-      setVisitor({ name, email, company, phone });
+      const id = await generateFirebaseId("visitors");
+      await addVisitor({ name, email, company, phone, id });
+      setVisitor({ name, email, company, phone, id });
+      if (rememberMe) {
+        window.localStorage.setItem(
+          "visitor",
+          JSON.stringify({ name, email, company, phone, id })
+        );
+      }
     } else {
       setVisitor(returningVisitor);
+      if (rememberMe) {
+        window.localStorage.setItem(
+          "visitor",
+          JSON.stringify(returningVisitorData)
+        );
+      }
     }
     setAddingVisitor(false);
-    if (rememberMe) {
-      window.localStorage.setItem(
-        "visitor",
-        JSON.stringify(returningVisitorData || { name, email, company, phone })
-      );
-    }
+
     setStep(STEPS.VISIT_DETAILS);
   };
   const handleAddVisit = async () => {
     setAddingVisit(true);
     const visitData = {
-      visitor: visitor?.email,
+      visitor: visitor?.id,
       hasAppointment,
       host,
       time: new Date().getTime(),
@@ -158,11 +170,15 @@ export default function Homepage() {
                       </div>
 
                       <div className="w-full p-2 text-left">
-                        <small className="">Email Address</small>
+                        <small className="">
+                          Email Address{" "}
+                          <small className="text-xs text-gray-400">
+                            (Optional)
+                          </small>{" "}
+                        </small>
                         <input
                           className="w-full px-5 py-3.5 text-gray-500 placeholder-gray-500 bg-white outline-none focus:ring-4 focus:ring-indigo-500 border border-gray-200 rounded-lg"
                           type="email"
-                          required
                           title="Email Address"
                           placeholder="Email Address"
                           name="email"

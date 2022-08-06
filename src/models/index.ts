@@ -2,7 +2,8 @@ export type Visitor = {
   name: string;
   company?: string;
   email: string;
-  phone: string
+  phone: string,
+  id?:string
 };
 export type Visit = {
   id?: string;

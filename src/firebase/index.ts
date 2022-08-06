@@ -31,13 +31,13 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const visitorsRef = collection(db, "visitors");
+const visitsRef = collection(db, "visits");
 
 async function getVisits() {
   const visitsCol = collection(db, "visits");
 
   const citySnapshot = await getDocs(visitsCol);
-  console.log({citySnapshot:citySnapshot.docs.map(d=>d.id)});
-  
+ 
   const cityList = citySnapshot.docs.map((doc) => {
     return {
       ...doc.data(),
@@ -52,25 +52,30 @@ async function getVisitors() {
   const cityList = citySnapshot.docs.map((doc) => doc.data());
   return cityList;
 }
+async function getVisitor(id) {
+  const docRef = doc(db, "visitors", id);
+  const docSnap = await getDoc(docRef);
+  let visitor: (Visitor | null) =null
+  if (docSnap.exists()) {
+    visitor =docSnap.data() as Visitor
+  }
+  return visitor
+}
 const addFeedback = async (data: Visit) => {
-  console.log({data});
   
   await addDoc(collection(db, "feedbacks"), data)
     .then((c) => {
-      console.log({c});
       
       return data;
     })
     .catch((error) => {
-      console.log({error});
       
       return null;
     });
 };
 const generateFirebaseId = (path: string)=>{
-
-  const ref =  collection;
-  return ref
+  const ref = doc(collection(db, path));
+  return ref.id
 }
 const updateVisit = async (data: Visit,id:string) => {
   const visitDocRef = doc(db, "visits", id);
@@ -82,22 +87,26 @@ const updateVisit = async (data: Visit,id:string) => {
   });;
 };
 const addVisit = async (data: Visit) => {
-  await addDoc(collection(db, "visits"), data)
+  const id = await generateFirebaseId('visits')
+  await setDoc(doc(visitsRef, id), {...data,id})
     .then((c) => {
-      return data;
+      
+      return {...data, id};
     })
     .catch((error) => {
       return null;
     });
 };
 const addVisitor = async (data: Visitor) => {
-  await setDoc(doc(visitorsRef, data.email), data)
+  
+  await setDoc(doc(visitorsRef, data.id), {...data,})
     .then((c) => {
-      return data;
+      const co: Visitor={...data}
+      return co;
     })
     .catch((error) => {
       return null;
     });
 };
 
-export { getVisitors, addVisitor, addVisit, addFeedback,getVisits,generateFirebaseId,updateVisit };
+export { getVisitor,getVisitors, addVisitor, addVisit, addFeedback,getVisits,generateFirebaseId,updateVisit };
