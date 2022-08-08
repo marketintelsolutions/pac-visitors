@@ -1,5 +1,6 @@
 import "./App.css";
 import Dashboard from "./Screens/Dashboard.tsx";
+import Feedbacks from "./Screens/Feedbacks.tsx";
 import Feedback from "./Screens/Feedback.tsx";
 import Homepage from "./Screens/Homepage.tsx";
 import React from "react";
@@ -36,6 +37,7 @@ function App() {
             renders the first one that matches the current URL. */}
           <Routes>
             <Route path="/admin" element={<Dashboard />} />
+            <Route path="/feedbacks" element={<Feedbacks />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/" element={<Homepage />} />
           </Routes>

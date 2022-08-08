@@ -14,3 +14,13 @@ export type Visit = {
   time: number;
   departure?: number;
 };
+export type Feedback = {
+  id?: string;
+  feedback: string;
+  purposeAchieved: boolean;
+  rating: number;
+  userEmail: string;
+  userId: string;
+  userName: string;
+  time?: number;
+};

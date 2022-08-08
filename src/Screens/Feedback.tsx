@@ -62,6 +62,7 @@ export default function Feedback() {
       userEmail,
       userName,
       userId,
+      time: new Date().getTime(),
     };
 
     await addFeedback(feedbackData);

@@ -33,6 +33,19 @@ const db = getFirestore(app);
 const visitorsRef = collection(db, "visitors");
 const visitsRef = collection(db, "visits");
 
+async function getFeedbacks() {
+  const feedbacksCol = collection(db, "feedbacks");
+
+  const citySnapshot = await getDocs(feedbacksCol);
+ 
+  const feedbacks = citySnapshot.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id:doc.id
+    }
+  });
+  return feedbacks;
+}
 async function getVisits() {
   const visitsCol = collection(db, "visits");
 
@@ -109,4 +122,4 @@ const addVisitor = async (data: Visitor) => {
     });
 };
 
-export { getVisitor,getVisitors, addVisitor, addVisit, addFeedback,getVisits,generateFirebaseId,updateVisit };
+export { getFeedbacks,getVisitor,getVisitors, addVisitor, addVisit, addFeedback,getVisits,generateFirebaseId,updateVisit };

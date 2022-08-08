@@ -1,33 +1,37 @@
 import React, { FC, useEffect, useState } from "react";
-import { Visit, Visitor } from "../models";
-import { getVisitors, getVisits, updateVisit } from "../firebase/index.ts";
+import { Visit, Visitor, Feedback } from "../models";
+import { getVisitors, getFeedbacks, updateVisit } from "../firebase/index.ts";
 import arraySort from "array-sort";
 import FuzzySearch from "fuzzy-search";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
-export default function Dashboard() {
-  const [visitors, setVisitors] = useState<Visitor[]>([]);
-  const [visits, setVisits] = useState<Visit[]>([]);
-  const [visitUpdating, setVisitUpdating] = useState<string | null>(null);
-  const [updatingVisit, setUpdatingVisit] = useState(false);
+export default function Feedbacks() {
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [query, setQuery] = useState("");
 
-  const vistorsToday = visits.filter(
-    (i) => i.time >= moment().startOf("day").toDate().getTime()
+  const vistorsToday = feedbacks.filter(
+    (i) => i.time && i.time >= moment().startOf("day").toDate().getTime()
   );
-
-  var result = arraySort(visits, ["time"], { reverse: true });
-
+  enum RATING {
+    ZERO,
+    POOR,
+    FAIR,
+    AVERAGE,
+    GOOD,
+    EXELLENT,
+  }
+  var result = arraySort(feedbacks, ["time"], { reverse: true });
+  const ratings: { text: string; emoji: string; ratingValue: RATING }[] = [
+    { text: "Poor", emoji: "😡", ratingValue: RATING.POOR },
+    { text: "Fair", emoji: "😏", ratingValue: RATING.FAIR },
+    { text: "Average", emoji: "🙂", ratingValue: RATING.AVERAGE },
+    { text: "Good", emoji: "😘", ratingValue: RATING.GOOD },
+    { text: "Excellent", emoji: "😍", ratingValue: RATING.EXELLENT },
+  ];
   const searcher = new FuzzySearch(
-    result.map((i) => {
-      const visitorValue = visitors.find((x) => x.id === i.visitor);
-      return {
-        ...i,
-        ...visitorValue,
-      };
-    }),
-    ["name", "email"],
+    feedbacks,
+    ["feedback", "userName", "userEmail"],
     {
       caseSensitive: false,
     }
@@ -38,89 +42,44 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    const loadVisitors = async () => {
-      const visitorsList = await getVisitors().catch(() => {});
-      setVisitors(visitorsList);
+    const loadFeedbacks = async () => {
+      const feedbacksList = await getFeedbacks().catch(() => {});
+      setFeedbacks(feedbacksList);
     };
-    const loadVisits = async () => {
-      const visitsList = await getVisits().catch(() => {});
-      setVisits(visitsList);
-    };
-    loadVisits();
-    loadVisitors();
+    loadFeedbacks();
   }, []);
   type VisitRowProp = {
-    visit: Visit;
+    visit: Feedback;
   };
-  const VisitRow: FC<VisitRowProp> = ({ visit }) => {
-    const visitIndex = visits.findIndex((i) => i.id === visit.id);
-    const visitor = visitors.find(
-      (i) => i.id === visit.visitor || i.email === visit.visitor
-    );
+  const VisitRow: FC<VisitRowProp> = ({ visit: feedback }) => {
     return (
       <tr className="text-xs bg-gray-50 border-t ">
-        <td className="flex px-4 py-3">
-          {/* <img
-            className="w-8 h-8 mr-4 object-cover rounded-md"
-            src="https://images.unsplash.com/photo-1559893088-c0787ebfc084?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"
-            alt=""
-          /> */}
+        <td className="font-medium">{moment(feedback?.time).calendar()}</td>
+        <td className="flex  py-3">
           <div>
-            <p className="font-medium">{visitor?.name}</p>
-            <p className="text-gray-500">{visitor?.email}</p>
+            <p className="font-medium">{feedback?.userName}</p>
+            <p className="text-gray-500">{feedback?.userEmail}</p>
           </div>
         </td>
         <td className="font-medium">
           <div className=" mr-4">
-            <p className="font-medium">{visit.host}</p>
+            <p className="font-medium">{feedback?.feedback}</p>
           </div>
         </td>
-
-        <td className="font-medium">{moment(visit.time).calendar()}</td>
         <td className="font-medium">
-          {visit.departure ? moment(visit.departure).calendar() : "--"}
+          <div className=" mr-4">
+            <p className="font-medium">
+              {feedback?.purposeAchieved ? "Yes" : "No"}
+            </p>
+          </div>
         </td>
-        <td className="grid grid-cols-2 items-center h-full  py-3">
-          <button
-            disabled={visit.departure || updatingVisit}
-            onClick={async () => {
-              setUpdatingVisit(true);
-              setVisitUpdating(visit.id!);
-              await updateVisit(
-                { ...visit, departure: new Date().getTime() },
-                visit.id!
-              );
-              const currentVisits = visits;
-              currentVisits.splice(visitIndex, 1, {
-                ...visit,
-                departure: new Date().getTime(),
-              });
-              setVisits(currentVisits);
-              setUpdatingVisit(false);
-              setVisitUpdating(null);
-            }}
-            className={` self-center py-3  ${
-              visit.departure ? "bg-gray-900" : "bg-green-500"
-            } text-white  rounded-full items-center`}
-          >
-            {visit.departure ? "Checked Out ✔️" : "Check Out"}
-          </button>
-          {visitUpdating === visit.id && updatingVisit && (
-            <svg
-              className="animate-spin h-5 w-5 mr-3  rounded-full border-gray-900 border-t-2 mx-2"
-              viewBox="0 0 24 24"
-            ></svg>
-          )}
-          {visit.departure && (
-            <Link to={`/feedback?id=${visitor?.id}`}>
-              <div
-                onClick={async () => {}}
-                className={`flex justify-center   self-center mx-2 py-3  bg-green-500 text-white  rounded-full items-center`}
-              >
-                Add feedback
-              </div>
-            </Link>
-          )}
+        <td className="font-medium">
+          <div className=" mr-4">
+            <p className="font-medium">
+              {feedback.rating ? ratings[feedback.rating - 1]?.emoji : "--"}{" "}
+              {feedback.rating ? ratings[feedback.rating - 1]?.text : "--"}
+            </p>
+          </div>
         </td>
       </tr>
     );
@@ -130,7 +89,7 @@ export default function Dashboard() {
       <section className="py-8 px-6 bg-white">
         <div className="flex flex-wrap items-center">
           <div className="w-full lg:w-auto flex items-center mb-4 lg:mb-0">
-            <h2 className="text-2xl font-bold">PAC Visitors</h2>
+            <h2 className="text-2xl font-bold">Visitors' Feedback</h2>
             <span className="inline-block py-1 px-2 ml-2 rounded-full text-xs text-white bg-indigo-500">
               {vistorsToday.length} Today
             </span>
@@ -157,9 +116,9 @@ export default function Dashboard() {
               </svg>
             </button>
           </div>
-          <Link to="/feedbacks">
+          <Link to="/admin">
             <button className="bg-indigo-500 text-white px-4 rounded py-2 ml-3">
-              Feedbacks
+              Back to Dashboard
             </button>
           </Link>
         </div>
@@ -170,11 +129,11 @@ export default function Dashboard() {
             <table className="table-auto w-full">
               <thead>
                 <tr className="text-xs text-gray-500 text-left">
+                  <th className="pb-3 font-medium">Time</th>
                   <th className="pb-3 font-medium">User</th>
-                  <th className="pb-3 font-medium">Host</th>
-                  <th className="pb-3 font-medium">Visit time</th>
-                  <th className="pb-3 font-medium">Departure time</th>
-                  <th className="pb-3 font-medium">Action</th>
+                  <th className="pb-3 font-medium">Feedback</th>
+                  <th className="pb-3 font-medium">Purpose Achieved?</th>
+                  <th className="pb-3 font-medium">Rating</th>
                 </tr>
               </thead>
 
@@ -186,7 +145,7 @@ export default function Dashboard() {
             </table>
             {searchResult.length === 0 && (
               <div className="text-center w-full flex justify-center items-center  h-[200px]">
-                No Vistors
+                No Feedback
               </div>
             )}
           </div>
