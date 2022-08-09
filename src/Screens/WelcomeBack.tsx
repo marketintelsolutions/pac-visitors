@@ -4,7 +4,7 @@ import PACLogo from "../assets/PAC-HOLD.-LOGO-2018.png";
 
 export default function WelcomeBack({ visitor, onClick, onReset }) {
   return (
-    <section className="relative pt-28 bg-gradient-gray2 overflow-hidden min-h-screen">
+    <section className="relative pt-28 bg-gradient-gray2 overflow-hidden min-h-screen -mb-16">
       <a href="https://panafricancapitalholdings.com/">
         <img src={PACLogo} width={200} className="mx-auto lg:mb-20 mb-10 " />
       </a>{" "}

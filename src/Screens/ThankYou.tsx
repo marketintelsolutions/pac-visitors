@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function ThankYou({ visitor }) {
   return (
-    <section className="relative pt-28 bg-gradient-gray2 overflow-hidden min-h-screen">
+    <section className="relative pt-28 bg-gradient-gray2 overflow-hidden min-h-screen -mb-16">
       <a href="https://panafricancapitalholdings.com/">
         <img src={PACLogo} width={200} className="mx-auto lg:mb-20 mb-10" />
       </a>{" "}
@@ -39,25 +39,6 @@ export default function ThankYou({ visitor }) {
                     <p className="mb-8 text-gray-600 text-lg">
                       Contact us anytime, from anywhere in the building. Get in
                       touch.
-                    </p>
-                    <a
-                      className="group inline-block font-heading font-medium text-gray-900 hover:text-gray-800 text-base overflow-hidden"
-                      href="tel:+23412718630"
-                    >
-                      <p className="mb-1">📞 +234 (1) 271 8630</p>
-                      <div className="w-full transform -translate-x-0 group-hover:translate-x-full h-0.5 bg-gradient-cyan transition ease-in-out duration-500"></div>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full p-4">
-                <div className="md:max-w-lg px-8 py-7 bg-white rounded-10">
-                  <div className="max-w-xs">
-                    <h3 className="mb-3 font-heading font-bold text-xl text-gray-900">
-                      Call IT for any tech glitch
-                    </h3>
-                    <p className="mb-8 text-gray-600 text-lg">
-                      Contact us anytime, from anywhere. Get in touch.
                     </p>
                     <a
                       className="group inline-block font-heading font-medium text-gray-900 hover:text-gray-800 text-base overflow-hidden"

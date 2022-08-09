@@ -116,7 +116,7 @@ export default function Homepage() {
           onReset={resertUser}
         />
       ) : (
-        <section className="relative pt-16 pb-36 bg-gradient-gray2 overflow-hidden min-h-screen">
+        <section className="relative pt-16 pb-36 bg-gradient-gray2 overflow-hidden min-h-screen -mb-16">
           <Radial2 className="absolute top-0 transform left-1/2 -translate-x-1/2" />
           <Radial2 className="absolute bottom-0 transform left-1/2 -translate-x-1/2 rotate-180" />
           <div className="relative z-10 container mx-auto px-4">
